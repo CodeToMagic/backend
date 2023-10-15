@@ -9,3 +9,139 @@ datasource db {
   provider = "mysql"
   url      = env("DATABASE_URL")
 }
+
+enum Role {
+  ADMIN
+  DOCTOR
+  PATIENT
+}
+
+enum SlotType {
+  MORNING
+  AFTERNOON
+}
+
+enum AppointmentStatus {
+  SCHEDULED
+  CANCELED
+  COMPLETED
+}
+
+enum PrescriptionStatus {
+  DRAFT
+  ISSUED
+}
+
+enum OrderStatus {
+  PENDING
+  CONFIRMED
+  SHIPPED
+  DELIVERED
+  CANCELED
+}
+
+model User {
+  uhid               Int                  @id @default(autoincrement())
+  email              String               @unique
+  firstName          String
+  lastName           String
+  active             Boolean              @default(true)
+  deactivationDate   DateTime?
+  gender             String               @default("Not specified")
+  phoneNumber        String
+  address            String
+  dob                DateTime
+  creditCard         String
+  userRole           Role                 @default(PATIENT)
+  saltedPassword     String
+  sessionToken       String
+  AppointmentSlots   AppointmentSlots[]
+  AppointmentHistory AppointmentHistory[]
+  OrderHistory       OrderHistory[]
+}
+
+model AppointmentSlots {
+  slotId             Int                  @id @default(autoincrement())
+  user               User                 @relation(fields: [doctorId], references: [uhid])
+  doctorId           Int
+  date               DateTime
+  slot               SlotType
+  availableCount     Int                  @default(30)
+  updatedAt          DateTime             @updatedAt
+  AppointmentHistory AppointmentHistory[]
+
+  @@unique([doctorId, date, slot])
+}
+
+model AppointmentHistory {
+  appointmentId       Int                   @id @default(autoincrement())
+  appointmentSlots    AppointmentSlots      @relation(fields: [slotId], references: [slotId])
+  slotId              Int
+  user                User                  @relation(fields: [patientId], references: [uhid])
+  patientId           Int
+  currentStatus       AppointmentStatus
+  PrescriptionHistory PrescriptionHistory[]
+  HealthHistory       HealthHistory[]
+
+  @@unique([slotId, patientId])
+}
+
+model Medicines {
+  medicineId           Int                 @id @default(autoincrement())
+  medicineName         String
+  availableQTY         Int
+  cost                 Decimal             @default(1000)
+  isPrescriptionNeeded Boolean             @default(true)
+  description          String
+  imageUrl             String
+  PrescriptionItems    PrescriptionItems[]
+  OrderHistoryItems    OrderHistoryItems[]
+}
+
+model PrescriptionHistory {
+  prescriptionId     Int                 @id @default(autoincrement())
+  appointmentHistory AppointmentHistory  @relation(fields: [appointmentId], references: [appointmentId])
+  appointmentId      Int
+  currentStatus      PrescriptionStatus
+  PrescriptionItems  PrescriptionItems[]
+
+  @@unique([prescriptionId, appointmentId])
+}
+
+model PrescriptionItems {
+  prescriptionHistory PrescriptionHistory @relation(fields: [prescriptionId], references: [prescriptionId])
+  prescriptionId      Int
+  medicines           Medicines           @relation(fields: [medicineId], references: [medicineId])
+  medicineId          Int
+  qty                 Int
+  description         String?
+
+  @@unique([prescriptionId, medicineId])
+}
+
+model HealthHistory {
+  healthHistoryId    Int                @id @default(autoincrement())
+  appointmentHistory AppointmentHistory @relation(fields: [appointmentId], references: [appointmentId])
+  appointmentId      Int                @unique
+  diagnosis          String
+}
+
+model OrderHistory {
+  orderId           Int                 @id @default(autoincrement())
+  user              User                @relation(fields: [userId], references: [uhid])
+  userId            Int
+  totalAmount       Decimal
+  lastUpdate        DateTime            @updatedAt
+  currentStatus     OrderStatus
+  OrderHistoryItems OrderHistoryItems[]
+}
+
+model OrderHistoryItems {
+  orderHistory OrderHistory @relation(fields: [orderId], references: [orderId])
+  orderId      Int
+  medicines    Medicines    @relation(fields: [medicineId], references: [medicineId])
+  medicineId   Int
+  qty          Int
+
+  @@unique([orderId, medicineId])
+}
