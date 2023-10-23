@@ -18,6 +18,20 @@ export type User = {
   salt: string;
 };
 
+export type AppointmentSlot = {
+  slotId: number;
+  doctorId: number;
+  date: Date;
+  slot: "MORNING" | "AFTERNOON";
+  availableCount: number;
+  updatedAt: Date;
+};
+export type AppointmentHistory = {
+  appointmentId: number;
+  slotId: number;
+  patientId: number;
+  currentStatus: "SCHEDULED" | "CANCELED" | "COMPLETED";
+};
 export type createUserRequest = {
   email: string;
   firstName: string;
@@ -29,4 +43,10 @@ export type createUserRequest = {
   creditCard: string;
   userRole: Role;
   password: string;
+};
+
+export type createAppointmentRequest = {
+  doctorId: number;
+  date: Date;
+  slot: "MORNING" | "AFTERNOON";
 };

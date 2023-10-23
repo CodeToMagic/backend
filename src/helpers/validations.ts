@@ -1,5 +1,5 @@
 import Joi from "joi";
-import { createUserRequest } from "./types";
+import { createAppointmentRequest, createUserRequest } from "./types";
 
 export const validateLoginData = (login: {
   email: string;
@@ -30,4 +30,13 @@ export const validateCreateUserData = (req: createUserRequest) => {
       .default("PATIENT"),
   });
   return createUserSchema.validate(req);
+};
+
+export const validateRegisterAppointment = (req: createAppointmentRequest) => {
+  const createAppointmentSchema = Joi.object<createAppointmentRequest>({
+    slot: Joi.string().valid("MORNING", "AFTERNOON").required(),
+    date: Joi.date().required(),
+    doctorId: Joi.number().required(),
+  });
+  return createAppointmentSchema.validate(req);
 };
