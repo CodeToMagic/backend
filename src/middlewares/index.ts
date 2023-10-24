@@ -13,11 +13,17 @@ export const isAuthenticated = async (
   try {
     const sessionToken = req.cookies["BACKEND-AUTH"];
     if (!sessionToken) {
-      return res.sendStatus(403);
+      return res.status(403).json({
+        errorMessage:
+          "Session token not found, Please login to complete this transaction",
+      });
     }
     const existingUser = await getUserBySessionToken(sessionToken);
     if (!existingUser) {
-      return res.sendStatus(403);
+      return res.status(403).json({
+        errorMessage:
+          "Invalid session found, Please login to complete this transaction",
+      });
     }
     merge(req, { identity: existingUser });
     return next();
@@ -38,7 +44,9 @@ export const isValidDoctor = async (
     }
     const doctorData = await getUserByUhid(parseInt(doctorId));
     if (!doctorData || doctorData.userRole != "DOCTOR") {
-      return res.sendStatus(403);
+      return res.status(403).json({
+        errorMessage: "Invalid doctor uhid",
+      });
     }
     merge(req, { doctor: doctorData });
     return next();

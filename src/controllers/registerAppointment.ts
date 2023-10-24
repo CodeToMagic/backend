@@ -47,12 +47,15 @@ export const registerAppointment = async (
         successMessage: "Slot booking successful",
       });
     } else {
-      return res.status(400).json({
+      return res.status(500).json({
         errorMessage:
           "Sorry, all appointment slots are currently booked. Please choose another time or check back later.",
       });
     }
   } catch (error) {
-    return res.sendStatus(500);
+    return res.status(500).json({
+      errorMessage: "System error occured",
+      systemError: error,
+    });
   }
 };
