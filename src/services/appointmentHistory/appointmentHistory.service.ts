@@ -43,3 +43,16 @@ export const createNewAppointment = async (
 ): Promise<AppointmentHistory | null> => {
   return db.appointmentHistory.create({ data: req });
 };
+
+export const getCurrentSlotInformation = async (
+  appointmentId: number
+): Promise<AppointmentHistory | null> => {
+  return db.appointmentHistory.findUnique({ where: { appointmentId } });
+};
+
+export const updateCurrentAppointment = async (
+  appointmentId: number,
+  data: AppointmentHistory
+): Promise<AppointmentHistory> => {
+  return db.appointmentHistory.update({ where: { appointmentId }, data });
+};

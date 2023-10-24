@@ -1,5 +1,5 @@
 import express from "express";
-import { registerAppointment } from "../controllers/registerAppointment";
+import { registerAppointment } from "../controllers/appointment";
 import { isAuthenticated, isValidDoctor } from "../middlewares";
 
 export default (router: express.Router) => {

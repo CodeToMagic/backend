@@ -1,5 +1,12 @@
 import express from "express";
 import { get } from "lodash";
+import {
+  INVALID_REQUEST,
+  NO_SLOTS_AVAILABLE,
+  SCHEDULED,
+  SLOT_BOOKING_SUCCESS,
+  SYSTEM_ERROR,
+} from "../helpers/constants";
 import { validateRegisterAppointment } from "../helpers/validations";
 import {
   createNewAppointment,
@@ -16,7 +23,7 @@ export const registerAppointment = async (
     const valid = validateRegisterAppointment(req.body);
 
     if (valid.error) {
-      return res.status(400).json({ errorMessage: "Invalid request" });
+      return res.status(400).json({ errorMessage: INVALID_REQUEST });
     }
 
     const currentUserId = get(req, "identity.uhid") as number;
@@ -38,24 +45,31 @@ export const registerAppointment = async (
       await createNewAppointment({
         slotId: slotDetails.slotId,
         patientId: currentUserId,
-        currentStatus: "SCHEDULED",
+        currentStatus: SCHEDULED,
       });
       slotDetails.availableCount = slotDetails.availableCount - 1;
       await updateSlotInformation(slotDetails);
 
       return res.status(200).json({
-        successMessage: "Slot booking successful",
+        successMessage: SLOT_BOOKING_SUCCESS,
       });
     } else {
       return res.status(500).json({
-        errorMessage:
-          "Sorry, all appointment slots are currently booked. Please choose another time or check back later.",
+        errorMessage: NO_SLOTS_AVAILABLE,
       });
     }
   } catch (error) {
     return res.status(500).json({
-      errorMessage: "System error occured",
+      errorMessage: SYSTEM_ERROR,
       systemError: error,
     });
   }
+};
+
+export const cancelAppointment = async (
+  req: express.Request,
+  res: express.Response
+) => {
+  try {
+  } catch (error) {}
 };

@@ -4,6 +4,7 @@ import cookieParser from "cookie-parser";
 import cors from "cors";
 import express from "express";
 import http from "http";
+import { DOMAIN, PORT } from "../src/helpers/constants";
 import router from "./router";
 
 const app = express();
@@ -15,8 +16,8 @@ app.use(bodyParser.json());
 
 const server = http.createServer(app);
 
-server.listen(8080, () => {
-  console.log("server running on http://localhost:8080/");
+server.listen(PORT, () => {
+  console.log(`server running on http://${DOMAIN}:/${PORT}`);
 });
 
 app.use("/", router());

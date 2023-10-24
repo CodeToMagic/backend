@@ -1,6 +1,15 @@
 import express from "express";
 import { authenticate, random } from "../helpers";
 import {
+  DOMAIN,
+  DUPLICATE_USER,
+  INVALID_LOGIN_DETAILS,
+  INVALID_USER_DETAILS,
+  SESSION_TOKEN_COOKIE,
+  USER_NOT_FOUND,
+  WRONG_PASSWORD,
+} from "../helpers/constants";
+import {
   validateCreateUserData,
   validateLoginData,
 } from "../helpers/validations";
@@ -14,21 +23,19 @@ export const login = async (req: express.Request, res: express.Response) => {
     const valid = validateLoginData(req.body);
 
     if (valid.error) {
-      return res
-        .status(400)
-        .json({ errorMessage: "Login details provided are invalid" });
+      return res.status(400).json({ errorMessage: INVALID_LOGIN_DETAILS });
     }
 
     const user = await getUserByEmail(valid.value.email);
 
     if (!user) {
-      return res.status(400).json({ errorMessage: "User does not exist" });
+      return res.status(400).json({ errorMessage: USER_NOT_FOUND });
     }
 
     const expectedHash = authenticate(user.salt, valid.value.password);
 
     if (user.saltedPassword != expectedHash) {
-      return res.status(403).json({ errorMessage: "Wrong password" });
+      return res.status(403).json({ errorMessage: WRONG_PASSWORD });
     }
 
     const salt = random();
@@ -36,8 +43,8 @@ export const login = async (req: express.Request, res: express.Response) => {
 
     const updatedUser = await updateUser(user);
 
-    res.cookie("BACKEND-AUTH", user.sessionToken, {
-      domain: "localhost",
+    res.cookie(SESSION_TOKEN_COOKIE, user.sessionToken, {
+      domain: DOMAIN,
       path: "/",
     });
 
@@ -50,13 +57,11 @@ export const register = async (req: express.Request, res: express.Response) => {
   try {
     const valid = validateCreateUserData(req.body);
     if (valid.error) {
-      return res
-        .status(400)
-        .json({ errorMessage: "User details provided are invalid" });
+      return res.status(400).json({ errorMessage: INVALID_USER_DETAILS });
     }
     const existingUser = await getUserByEmail(req.body.email);
     if (existingUser) {
-      return res.status(400).json({ errorMessage: "User already exist" });
+      return res.status(400).json({ errorMessage: DUPLICATE_USER });
     }
     const salt = random();
     const user = await createUser({
@@ -75,7 +80,6 @@ export const register = async (req: express.Request, res: express.Response) => {
     });
     return res.status(200).json(user).end();
   } catch (error) {
-    console.log(error);
     return res.sendStatus(500);
   }
 };

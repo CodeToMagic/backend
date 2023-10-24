@@ -1,6 +1,14 @@
 import express from "express";
 import { get, merge } from "lodash";
 import {
+  DOCTOR,
+  INSUFFICIENT_PERMISSION,
+  INVALID_DOCTOR,
+  INVALID_SESSION,
+  SESSION_TOKEN_COOKIE,
+} from "../helpers/constants";
+import { getCurrentSlotInformation } from "../services/appointmentHistory/appointmentHistory.service";
+import {
   getUserBySessionToken,
   getUserByUhid,
 } from "../services/user/user.service";
@@ -11,18 +19,16 @@ export const isAuthenticated = async (
   next: express.NextFunction
 ) => {
   try {
-    const sessionToken = req.cookies["BACKEND-AUTH"];
+    const sessionToken = req.cookies[SESSION_TOKEN_COOKIE];
     if (!sessionToken) {
       return res.status(403).json({
-        errorMessage:
-          "Session token not found, Please login to complete this transaction",
+        errorMessage: INVALID_SESSION,
       });
     }
     const existingUser = await getUserBySessionToken(sessionToken);
     if (!existingUser) {
       return res.status(403).json({
-        errorMessage:
-          "Invalid session found, Please login to complete this transaction",
+        errorMessage: INVALID_SESSION,
       });
     }
     merge(req, { identity: existingUser });
@@ -43,9 +49,9 @@ export const isValidDoctor = async (
       return res.sendStatus(403);
     }
     const doctorData = await getUserByUhid(parseInt(doctorId));
-    if (!doctorData || doctorData.userRole != "DOCTOR") {
+    if (!doctorData || doctorData.userRole != DOCTOR) {
       return res.status(403).json({
-        errorMessage: "Invalid doctor uhid",
+        errorMessage: INVALID_DOCTOR,
       });
     }
     merge(req, { doctor: doctorData });
@@ -60,19 +66,26 @@ export const isOwner = async (
   next: express.NextFunction
 ) => {
   try {
-    const { id } = req.params;
-    const currentUserId = get(req, "identity._id") as string;
+    const { appointmentId } = req.params;
+    const currentUserId = get(req, "identity.uhid") as number;
     if (!currentUserId) {
-      return res.sendStatus(400);
+      return res.status(403).json({
+        errorMessage: INVALID_SESSION,
+      });
     }
-
-    if (currentUserId.toString() !== id) {
-      return res.sendStatus(403);
+    const appointmentDetails = await getCurrentSlotInformation(
+      parseInt(appointmentId)
+    );
+    if (currentUserId == appointmentDetails.patientId) {
+      return res.status(403).json({
+        errorMessage: INSUFFICIENT_PERMISSION,
+      });
     }
 
     next();
   } catch (error) {
-    console.log(error);
-    return res.sendStatus(400);
+    return res.status(403).json({
+      errorMessage: error,
+    });
   }
 };
