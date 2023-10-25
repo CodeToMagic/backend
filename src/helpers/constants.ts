@@ -38,3 +38,5 @@ export const SOMETHING_WENT_WRONG: string =
   "Something went wrong, Please contact admin";
 export const CAN_CANCEL_ONLY_SCHEDULED_APPOINTMENT: string =
   "Haven't found any scheduled appointment";
+export const CANT_REGISTER: string =
+  "Can't make a duplicate appointment, either you have a scheduled or cancelled appointment in the same time frame";

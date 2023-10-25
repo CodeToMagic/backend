@@ -2,10 +2,12 @@ import express from "express";
 import { AppointmentHistory } from "helpers/types";
 import { get, merge } from "lodash";
 import {
+  CANT_REGISTER,
   CAN_CANCEL_ONLY_SCHEDULED_APPOINTMENT,
   DOCTOR,
   INSUFFICIENT_PERMISSION,
   INVALID_DOCTOR,
+  INVALID_REQUEST,
   INVALID_SESSION,
   NO_APPOINTMENTS_FOUND,
   NO_APPOINTMENT_ID,
@@ -13,7 +15,12 @@ import {
   SESSION_TOKEN_COOKIE,
   SYSTEM_ERROR,
 } from "../helpers/constants";
-import { getCurrentAppointmentInformation } from "../services/appointmentHistory/appointmentHistory.service";
+import { validateRegisterAppointment } from "../helpers/validations";
+import {
+  getCurrentAppointmentInformation,
+  getCurrentAppointmentInformationInfo,
+  getSlotInformation,
+} from "../services/appointmentHistory/appointmentHistory.service";
 import {
   getUserBySessionToken,
   getUserByUhid,
@@ -109,7 +116,42 @@ export const isOwner = async (
     });
   }
 };
+export const checkIfSlotIsClaimed = async (
+  req: express.Request,
+  res: express.Response,
+  next: express.NextFunction
+) => {
+  try {
+    const valid = validateRegisterAppointment(req.body);
+    if (valid.error) {
+      return res.status(400).json({ errorMessage: INVALID_REQUEST });
+    }
 
+    let slotDetails = await getSlotInformation(
+      valid.value.doctorId,
+      valid.value.date,
+      valid.value.slot
+    );
+    console.log(slotDetails);
+    if (slotDetails) {
+      const currentUserId = get(req, "identity.uhid") as number;
+      const appointmentInformation = getCurrentAppointmentInformationInfo(
+        slotDetails.slotId,
+        currentUserId
+      );
+      if (appointmentInformation)
+        return res.status(400).json({
+          errorMessage: CANT_REGISTER,
+        });
+    }
+    next();
+  } catch (error) {
+    return res.status(400).json({
+      errorMessage: SYSTEM_ERROR,
+      systemError: error,
+    });
+  }
+};
 export const isAppointmentValidForCancellation = async (
   req: express.Request,
   res: express.Response,

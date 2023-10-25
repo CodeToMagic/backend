@@ -4,6 +4,7 @@ import {
   registerAppointment,
 } from "../controllers/appointment";
 import {
+  checkIfSlotIsClaimed,
   isAppointmentValidForCancellation,
   isAuthenticated,
   isOwner,
@@ -15,6 +16,7 @@ export default (router: express.Router) => {
     "/appointment/schedule",
     isAuthenticated,
     isValidDoctor,
+    checkIfSlotIsClaimed,
     registerAppointment
   );
   router.post(

@@ -62,3 +62,12 @@ export const updateCurrentAppointment = async (
 ): Promise<AppointmentHistory> => {
   return db.appointmentHistory.update({ where: { appointmentId }, data });
 };
+
+export const getCurrentAppointmentInformationInfo = async (
+  slotId: number,
+  patientId: number
+) => {
+  return db.appointmentHistory.findFirst({
+    where: { AND: [{ slotId, patientId }] },
+  });
+};
