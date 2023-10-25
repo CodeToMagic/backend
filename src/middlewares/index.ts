@@ -132,7 +132,6 @@ export const checkIfSlotIsClaimed = async (
       valid.value.date,
       valid.value.slot
     );
-    console.log(slotDetails);
     if (slotDetails) {
       const currentUserId = get(req, "identity.uhid") as number;
       const appointmentInformation = getCurrentAppointmentInformationInfo(
