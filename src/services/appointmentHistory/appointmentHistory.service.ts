@@ -23,6 +23,12 @@ export const getSlotInformation = async (
   });
 };
 
+export const getSlotInformationBySlotId = async (
+  slotId: number
+): Promise<AppointmentSlot | null> => {
+  return db.appointmentSlots.findUnique({ where: { slotId } });
+};
+
 export const updateSlotInformation = async (
   updateData: AppointmentSlot
 ): Promise<AppointmentSlot | null> => {
@@ -44,7 +50,7 @@ export const createNewAppointment = async (
   return db.appointmentHistory.create({ data: req });
 };
 
-export const getCurrentSlotInformation = async (
+export const getCurrentAppointmentInformation = async (
   appointmentId: number
 ): Promise<AppointmentHistory | null> => {
   return db.appointmentHistory.findUnique({ where: { appointmentId } });

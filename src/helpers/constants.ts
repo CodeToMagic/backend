@@ -1,16 +1,19 @@
 // Application constants
-export const PORT: number = 3000;
+export const PORT: number = 8080;
 export const SESSION_TOKEN_COOKIE: string = "BACKEND-AUTH";
 export const DOMAIN: string = "localhost";
 
 //STATUS
 export const SCHEDULED: "SCHEDULED" = "SCHEDULED";
+export const CANCELED: "CANCELED" = "CANCELED";
 
 // ROLE constansts
 export const DOCTOR: string = "DOCTOR";
 
 //Success Messages
 export const SLOT_BOOKING_SUCCESS: string = "Slot booking successful";
+export const SLOT_BOOKING_CANCELED: string =
+  "You have successfully cancelled the appointment";
 
 // Error Messages
 export const INVALID_SESSION: string =
@@ -26,5 +29,12 @@ export const INVALID_USER_DETAILS: string = "User details provided are invalid";
 export const DUPLICATE_USER: string = "User already exist";
 export const INVALID_REQUEST: string = "Invalid request";
 export const NO_SLOTS_AVAILABLE: string =
-  "Sorry, all appointment slots are currently booked. Please choose another time or check back later.";
+  "Sorry, all appointment slots are currently booked. Please choose another time or check back later";
 export const SYSTEM_ERROR: string = "System error occured";
+export const NO_APPOINTMENT_ID: string = "Appointment ID can't be null";
+export const NO_APPOINTMENTS_FOUND: string =
+  "No appointments found for the given appointment id";
+export const SOMETHING_WENT_WRONG: string =
+  "Something went wrong, Please contact admin";
+export const CAN_CANCEL_ONLY_SCHEDULED_APPOINTMENT: string =
+  "Haven't found any scheduled appointment";

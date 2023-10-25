@@ -1,10 +1,14 @@
 import express from "express";
+import { AppointmentHistory } from "helpers/types";
 import { get } from "lodash";
 import {
+  CANCELED,
   INVALID_REQUEST,
   NO_SLOTS_AVAILABLE,
   SCHEDULED,
+  SLOT_BOOKING_CANCELED,
   SLOT_BOOKING_SUCCESS,
+  SOMETHING_WENT_WRONG,
   SYSTEM_ERROR,
 } from "../helpers/constants";
 import { validateRegisterAppointment } from "../helpers/validations";
@@ -12,6 +16,8 @@ import {
   createNewAppointment,
   createNewSlot,
   getSlotInformation,
+  getSlotInformationBySlotId,
+  updateCurrentAppointment,
   updateSlotInformation,
 } from "../services/appointmentHistory/appointmentHistory.service";
 
@@ -71,5 +77,32 @@ export const cancelAppointment = async (
   res: express.Response
 ) => {
   try {
-  } catch (error) {}
+    const appointmentDetails = get(
+      req,
+      "appointmentDetails"
+    ) as AppointmentHistory;
+    appointmentDetails.currentStatus = CANCELED;
+    await updateCurrentAppointment(
+      appointmentDetails.appointmentId,
+      appointmentDetails
+    );
+    const slotInformation = await getSlotInformationBySlotId(
+      appointmentDetails.slotId
+    );
+    if (!slotInformation) {
+      return res.status(500).json({
+        errorMessage: SOMETHING_WENT_WRONG,
+      });
+    }
+    slotInformation.availableCount = slotInformation.availableCount + 1;
+    await updateSlotInformation(slotInformation);
+    return res.status(200).json({
+      successMessage: SLOT_BOOKING_CANCELED,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      errorMessage: SYSTEM_ERROR,
+      systemError: error,
+    });
+  }
 };

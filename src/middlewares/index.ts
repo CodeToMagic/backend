@@ -1,13 +1,19 @@
 import express from "express";
+import { AppointmentHistory } from "helpers/types";
 import { get, merge } from "lodash";
 import {
+  CAN_CANCEL_ONLY_SCHEDULED_APPOINTMENT,
   DOCTOR,
   INSUFFICIENT_PERMISSION,
   INVALID_DOCTOR,
   INVALID_SESSION,
+  NO_APPOINTMENTS_FOUND,
+  NO_APPOINTMENT_ID,
+  SCHEDULED,
   SESSION_TOKEN_COOKIE,
+  SYSTEM_ERROR,
 } from "../helpers/constants";
-import { getCurrentSlotInformation } from "../services/appointmentHistory/appointmentHistory.service";
+import { getCurrentAppointmentInformation } from "../services/appointmentHistory/appointmentHistory.service";
 import {
   getUserBySessionToken,
   getUserByUhid,
@@ -57,7 +63,10 @@ export const isValidDoctor = async (
     merge(req, { doctor: doctorData });
     return next();
   } catch (error) {
-    return res.sendStatus(400);
+    return res.status(400).json({
+      errorMessage: SYSTEM_ERROR,
+      systemError: error,
+    });
   }
 };
 export const isOwner = async (
@@ -66,26 +75,61 @@ export const isOwner = async (
   next: express.NextFunction
 ) => {
   try {
-    const { appointmentId } = req.params;
+    const { appointmentId } = req.body;
     const currentUserId = get(req, "identity.uhid") as number;
     if (!currentUserId) {
       return res.status(403).json({
         errorMessage: INVALID_SESSION,
       });
     }
-    const appointmentDetails = await getCurrentSlotInformation(
+    if (!appointmentId) {
+      return res.status(403).json({
+        errorMessage: NO_APPOINTMENT_ID,
+      });
+    }
+    const appointmentDetails = await getCurrentAppointmentInformation(
       parseInt(appointmentId)
     );
-    if (currentUserId == appointmentDetails.patientId) {
+    if (!appointmentDetails) {
+      return res.status(403).json({
+        errorMessage: NO_APPOINTMENTS_FOUND,
+      });
+    }
+    if (currentUserId != appointmentDetails.patientId) {
       return res.status(403).json({
         errorMessage: INSUFFICIENT_PERMISSION,
       });
     }
-
+    merge(req, { appointmentDetails: appointmentDetails });
     next();
   } catch (error) {
-    return res.status(403).json({
-      errorMessage: error,
+    return res.status(400).json({
+      errorMessage: SYSTEM_ERROR,
+      systemError: error,
+    });
+  }
+};
+
+export const isAppointmentValidForCancellation = async (
+  req: express.Request,
+  res: express.Response,
+  next: express.NextFunction
+) => {
+  try {
+    const appointmentDetails = get(
+      req,
+      "appointmentDetails"
+    ) as AppointmentHistory;
+    if (appointmentDetails.currentStatus != SCHEDULED) {
+      return res.status(400).json({
+        errorMessage: CAN_CANCEL_ONLY_SCHEDULED_APPOINTMENT,
+      });
+    }
+    next();
+  } catch (error) {
+    return res.status(400).json({
+      errorMessage: SYSTEM_ERROR,
+      systemError: error,
     });
   }
 };
