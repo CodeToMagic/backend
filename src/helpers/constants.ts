@@ -14,6 +14,8 @@ export const DOCTOR: string = "DOCTOR";
 export const SLOT_BOOKING_SUCCESS: string = "Slot booking successful";
 export const SLOT_BOOKING_CANCELED: string =
   "You have successfully cancelled the appointment";
+export const APPOINTMENT_DETAILS_FETCHED: string =
+  "Appointment history fetched successfully";
 
 // Error Messages
 export const INVALID_SESSION: string =

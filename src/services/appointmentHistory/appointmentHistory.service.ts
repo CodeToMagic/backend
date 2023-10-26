@@ -71,3 +71,33 @@ export const getCurrentAppointmentInformationInfo = async (
     where: { AND: [{ slotId, patientId }] },
   });
 };
+
+export const getAlltAppointmentsByPatientId = async (patientId: number) => {
+  return db.appointmentHistory.findMany({
+    where: { patientId },
+    include: {
+      appointmentSlots: {
+        select: {
+          slotId: true,
+          date: true,
+          slot: true,
+          doctorId: true,
+          user: {
+            select: {
+              uhid: true,
+              email: true,
+              firstName: true,
+              lastName: true,
+              phoneNumber: true,
+              gender: true,
+              address: true,
+            },
+          },
+        },
+      },
+    },
+    orderBy: {
+      appointmentSlots: { date: "desc" },
+    },
+  });
+};

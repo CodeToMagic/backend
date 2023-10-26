@@ -1,6 +1,7 @@
 import express from "express";
 import {
   cancelAppointment,
+  patientAppointmentHistory,
   registerAppointment,
 } from "../controllers/appointment";
 import {
@@ -25,5 +26,10 @@ export default (router: express.Router) => {
     isOwner,
     isAppointmentValidForCancellation,
     cancelAppointment
+  );
+  router.get(
+    "/appointment/history",
+    isAuthenticated,
+    patientAppointmentHistory
   );
 };

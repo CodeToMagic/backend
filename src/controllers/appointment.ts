@@ -2,6 +2,7 @@ import express from "express";
 import { AppointmentHistory } from "helpers/types";
 import { get } from "lodash";
 import {
+  APPOINTMENT_DETAILS_FETCHED,
   CANCELED,
   INVALID_REQUEST,
   NO_SLOTS_AVAILABLE,
@@ -15,6 +16,7 @@ import { validateRegisterAppointment } from "../helpers/validations";
 import {
   createNewAppointment,
   createNewSlot,
+  getAlltAppointmentsByPatientId,
   getSlotInformation,
   getSlotInformationBySlotId,
   updateCurrentAppointment,
@@ -98,6 +100,27 @@ export const cancelAppointment = async (
     await updateSlotInformation(slotInformation);
     return res.status(200).json({
       successMessage: SLOT_BOOKING_CANCELED,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      errorMessage: SYSTEM_ERROR,
+      systemError: error,
+    });
+  }
+};
+
+export const patientAppointmentHistory = async (
+  req: express.Request,
+  res: express.Response
+) => {
+  try {
+    const currentUserId = get(req, "identity.uhid") as number;
+    const appointmentHistory = await getAlltAppointmentsByPatientId(
+      currentUserId
+    );
+    return res.status(200).json({
+      successMessage: APPOINTMENT_DETAILS_FETCHED,
+      patientAppointmentHistory: appointmentHistory,
     });
   } catch (error) {
     return res.status(500).json({
