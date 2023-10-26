@@ -134,10 +134,11 @@ export const checkIfSlotIsClaimed = async (
     );
     if (slotDetails) {
       const currentUserId = get(req, "identity.uhid") as number;
-      const appointmentInformation = getCurrentAppointmentInformationInfo(
+      const appointmentInformation = await getCurrentAppointmentInformationInfo(
         slotDetails.slotId,
         currentUserId
       );
+
       if (appointmentInformation)
         return res.status(400).json({
           errorMessage: CANT_REGISTER,
