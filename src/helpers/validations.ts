@@ -40,3 +40,17 @@ export const validateRegisterAppointment = (req: createAppointmentRequest) => {
   });
   return createAppointmentSchema.validate(req);
 };
+
+export const validateDoctorAppointmentsInDateRange = async (req: {
+  from: Date;
+  to: Date;
+}) => {
+  const dateRangeSchema = Joi.object({
+    from: Joi.date().required(),
+    to: Joi.date()
+      .required()
+      .min(Joi.ref("from"))
+      .message(`To must be grater than from`),
+  });
+  return dateRangeSchema.validate(req);
+};

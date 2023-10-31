@@ -1,16 +1,17 @@
 import express from "express";
 import {
-  cancelAppointment,
-  patientAppointmentHistory,
-  registerAppointment,
-} from "../controllers/appointment";
-import {
   checkIfSlotIsClaimed,
   isAppointmentValidForCancellation,
   isAuthenticated,
+  isDoctor,
   isOwner,
   isValidDoctor,
 } from "../middlewares";
+import {
+  cancelAppointment,
+  patientAppointmentHistory,
+  registerAppointment,
+} from "../services/appointment";
 
 export default (router: express.Router) => {
   router.post(
@@ -32,4 +33,5 @@ export default (router: express.Router) => {
     isAuthenticated,
     patientAppointmentHistory
   );
+  router.post("/doctors/appointments", isAuthenticated, isDoctor);
 };

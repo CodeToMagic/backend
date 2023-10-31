@@ -2,6 +2,15 @@ import express from "express";
 import { AppointmentHistory } from "helpers/types";
 import { get } from "lodash";
 import {
+  createNewAppointment,
+  createNewSlot,
+  getAlltAppointmentsByPatientId,
+  getSlotInformation,
+  getSlotInformationBySlotId,
+  updateCurrentAppointment,
+  updateSlotInformation,
+} from "../db/appointmentHistory/appointmentHistory";
+import {
   APPOINTMENT_DETAILS_FETCHED,
   CANCELED,
   INVALID_REQUEST,
@@ -13,15 +22,6 @@ import {
   SYSTEM_ERROR,
 } from "../helpers/constants";
 import { validateRegisterAppointment } from "../helpers/validations";
-import {
-  createNewAppointment,
-  createNewSlot,
-  getAlltAppointmentsByPatientId,
-  getSlotInformation,
-  getSlotInformationBySlotId,
-  updateCurrentAppointment,
-  updateSlotInformation,
-} from "../services/appointmentHistory/appointmentHistory.service";
 
 export const registerAppointment = async (
   req: express.Request,

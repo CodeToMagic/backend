@@ -1,4 +1,5 @@
 import express from "express";
+import { createUser, getUserByEmail, updateUser } from "../db/user/user";
 import { authenticate, random } from "../helpers";
 import {
   DOMAIN,
@@ -13,11 +14,6 @@ import {
   validateCreateUserData,
   validateLoginData,
 } from "../helpers/validations";
-import {
-  createUser,
-  getUserByEmail,
-  updateUser,
-} from "../services/user/user.service";
 export const login = async (req: express.Request, res: express.Response) => {
   try {
     const valid = validateLoginData(req.body);

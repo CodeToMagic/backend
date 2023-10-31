@@ -2,6 +2,12 @@ import express from "express";
 import { AppointmentHistory } from "helpers/types";
 import { get, merge } from "lodash";
 import {
+  getCurrentAppointmentInformation,
+  getCurrentAppointmentInformationInfo,
+  getSlotInformation,
+} from "../db/appointmentHistory/appointmentHistory";
+import { getUserBySessionToken, getUserByUhid } from "../db/user/user";
+import {
   CANT_REGISTER,
   CAN_CANCEL_ONLY_SCHEDULED_APPOINTMENT,
   DOCTOR,
@@ -16,15 +22,6 @@ import {
   SYSTEM_ERROR,
 } from "../helpers/constants";
 import { validateRegisterAppointment } from "../helpers/validations";
-import {
-  getCurrentAppointmentInformation,
-  getCurrentAppointmentInformationInfo,
-  getSlotInformation,
-} from "../services/appointmentHistory/appointmentHistory.service";
-import {
-  getUserBySessionToken,
-  getUserByUhid,
-} from "../services/user/user.service";
 
 export const isAuthenticated = async (
   req: express.Request,
@@ -165,6 +162,27 @@ export const isAppointmentValidForCancellation = async (
     if (appointmentDetails.currentStatus != SCHEDULED) {
       return res.status(400).json({
         errorMessage: CAN_CANCEL_ONLY_SCHEDULED_APPOINTMENT,
+      });
+    }
+    next();
+  } catch (error) {
+    return res.status(400).json({
+      errorMessage: SYSTEM_ERROR,
+      systemError: error,
+    });
+  }
+};
+
+export const isDoctor = async (
+  req: express.Request,
+  res: express.Response,
+  next: express.NextFunction
+) => {
+  try {
+    const currentRole = get(req, "identity.userRole") as string;
+    if (!currentRole || currentRole != DOCTOR) {
+      return res.status(403).json({
+        errorMessage: INSUFFICIENT_PERMISSION,
       });
     }
     next();

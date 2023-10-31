@@ -101,3 +101,27 @@ export const getAlltAppointmentsByPatientId = async (patientId: number) => {
     },
   });
 };
+
+export const retrieveDoctorAppointmentsInDateRange = async (
+  doctorId: number,
+  from: Date,
+  to: Date
+) => {
+  return db.appointmentSlots.findMany({
+    where: { AND: [{ doctorId, date: { gte: from, lte: to } }] },
+    include: {
+      AppointmentHistory: {
+        include: {
+          user: {
+            select: {
+              email: true,
+              firstName: true,
+              lastName: true,
+              phoneNumber: true,
+            },
+          },
+        },
+      },
+    },
+  });
+};
