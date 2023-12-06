@@ -37,3 +37,13 @@ export const updateUser = async (
     data: user,
   });
 };
+
+export const getUserBySessionToken = async (
+  sessionToken: string
+): Promise<User | null> => {
+  return db.user.findFirst({ where: { sessionToken } });
+};
+
+export const getUserByUhid = async (uhid: number): Promise<User | null> => {
+  return db.user.findUnique({ where: { uhid } });
+};
