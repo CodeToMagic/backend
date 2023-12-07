@@ -6,7 +6,9 @@ import {
   DUPLICATE_USER,
   INVALID_LOGIN_DETAILS,
   INVALID_USER_DETAILS,
+  LOG_OUT_SUCCESS,
   SESSION_TOKEN_COOKIE,
+  SYSTEM_ERROR,
   USER_NOT_FOUND,
   WRONG_PASSWORD,
 } from "../helpers/constants";
@@ -14,6 +16,7 @@ import {
   validateCreateUserData,
   validateLoginData,
 } from "../helpers/validations";
+import { get } from "lodash";
 export const login = async (req: express.Request, res: express.Response) => {
   try {
     const valid = validateLoginData(req.body);
@@ -47,9 +50,26 @@ export const login = async (req: express.Request, res: express.Response) => {
 
     return res.status(200).json(updatedUser).end();
   } catch (error) {
-    return res.status(400);
+    return res.status(500).json({
+      errorMessage: SYSTEM_ERROR,
+      systemError: error,
+    });
   }
 };
+export const logout = async (req:express.Request,res:express.Response) => {
+  try {
+    const uhid = get(req, "identity.uhid") as number;
+    console.log(uhid);
+    return res.status(200).json({
+      successMessage: LOG_OUT_SUCCESS
+    });
+  } catch (error) {
+    return res.status(500).json({
+      errorMessage: SYSTEM_ERROR,
+      systemError: error,
+    });
+  }
+}
 export const register = async (req: express.Request, res: express.Response) => {
   try {
     const valid = validateCreateUserData(req.body);
@@ -77,6 +97,9 @@ export const register = async (req: express.Request, res: express.Response) => {
     });
     return res.status(200).json(user).end();
   } catch (error) {
-    return res.sendStatus(500);
+    return res.status(500).json({
+      errorMessage: SYSTEM_ERROR,
+      systemError: error,
+    });
   }
 };

@@ -16,6 +16,7 @@ export const SLOT_BOOKING_CANCELED: string =
   "You have successfully cancelled the appointment";
 export const APPOINTMENT_DETAILS_FETCHED: string =
   "Appointment history fetched successfully";
+export const LOG_OUT_SUCCESS = "Successfully loggedout";
 
 // Error Messages
 export const INVALID_SESSION: string =
