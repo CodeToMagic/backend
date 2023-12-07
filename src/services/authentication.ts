@@ -42,6 +42,7 @@ export const login = async (req: express.Request, res: express.Response) => {
     res.cookie(SESSION_TOKEN_COOKIE, user.sessionToken, {
       domain: DOMAIN,
       path: "/",
+      httpOnly: true,
     });
 
     return res.status(200).json(updatedUser).end();
