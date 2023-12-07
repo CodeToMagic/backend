@@ -17,6 +17,7 @@ import {
   validateLoginData,
 } from "../helpers/validations";
 import { get } from "lodash";
+import { User } from "helpers/types";
 export const login = async (req: express.Request, res: express.Response) => {
   try {
     const valid = validateLoginData(req.body);
@@ -58,8 +59,9 @@ export const login = async (req: express.Request, res: express.Response) => {
 };
 export const logout = async (req:express.Request,res:express.Response) => {
   try {
-    const uhid = get(req, "identity.uhid") as number;
-    console.log(uhid);
+    const user = get(req, "identity") as User;
+    user.sessionToken="";
+    await updateUser(user);
     return res.status(200).json({
       successMessage: LOG_OUT_SUCCESS
     });
