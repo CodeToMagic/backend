@@ -17,6 +17,7 @@ import {
   INVALID_SESSION,
   NO_APPOINTMENTS_FOUND,
   NO_APPOINTMENT_ID,
+  ONLY_ADMIN,
   SCHEDULED,
   SESSION_TOKEN_COOKIE,
   SYSTEM_ERROR,
@@ -193,3 +194,22 @@ export const isDoctor = async (
     });
   }
 };
+
+export const isAdmin = async (req: express.Request,
+  res: express.Response,
+  next: express.NextFunction) => {
+  try {
+    const currentUserRole = get(req, "identity.userRole") as string;
+    if(currentUserRole !== "ADMIN"){
+      return res.status(400).json({
+        errorMessage: ONLY_ADMIN,
+      });
+    }
+    next();
+  } catch (error) {
+    return res.status(400).json({
+      errorMessage: SYSTEM_ERROR,
+      systemError: error,
+    });
+  }
+}
