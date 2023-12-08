@@ -1,7 +1,7 @@
 import express from "express";
 import { INVALID_REQUEST, MEDICINE_DELETE_SUCCESS, MEDICINE_SUCCESS, MEDICINE_UPDATE_SUCCESS, SYSTEM_ERROR } from "../helpers/constants";
 import { createMedicineSchema, updateMedicineSchema } from "../helpers/validations";
-import { createMedicineDB, deleteMedicineDB, updateMedicineDB } from "../db/medicines/medicines";
+import { createMedicineDB, deleteMedicineDB, getAllMedicinesDB, updateMedicineDB } from "../db/medicines/medicines";
 
 export const createMedicine = async (req: express.Request, res: express.Response) => {
     try {
@@ -64,7 +64,10 @@ export const deleteMedicine = async (req: express.Request, res: express.Response
 
 export const getAllMedicines = async (req: express.Request, res: express.Response) => {
     try {
-        // const res
+        const result = await getAllMedicinesDB();
+        return res.status(200).json({
+            result
+        });
     } catch (error) {
         return error.status(500).json({
             errorMessage: SYSTEM_ERROR,
