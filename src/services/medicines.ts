@@ -26,10 +26,11 @@ export const createMedicine =async(req: express.Request, res: express.Response) 
 export const updateMedicine =async(req: express.Request, res: express.Response) => {
     try {
         const valid = updateMedicineSchema.validate(req.body);
-        if (valid.error) {
+        const medicineId = parseInt(req?.params?.medicineId,10);
+        if (!medicineId||valid.error) {
           return res.status(400).json({ errorMessage: INVALID_REQUEST });
         }
-        await updateMedicineDB(req.body?.medicineId,req?.body);
+        await updateMedicineDB(medicineId,req?.body);
         return res.status(200).json({
             successMessage: MEDICINE_UPDATE_SUCCESS,
           });
@@ -43,7 +44,7 @@ export const updateMedicine =async(req: express.Request, res: express.Response) 
 
 export const deleteMedicine =async (req: express.Request, res: express.Response) => {
     try {
-        const medicineId = req?.body?.medicineId;
+        const medicineId = parseInt(req?.params?.medicineId,10);
         if(!medicineId){
             return res.status(400).json({ errorMessage: INVALID_REQUEST });
         }
