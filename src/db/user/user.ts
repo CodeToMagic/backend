@@ -47,3 +47,21 @@ export const getUserBySessionToken = async (
 export const getUserByUhid = async (uhid: number): Promise<User | null> => {
   return db.user.findUnique({ where: { uhid } });
 };
+
+export const getAllDoctorsDB = async () => {
+  return db.user.findMany({
+    where: {
+      userRole: "DOCTOR",
+    },
+    select: {
+      uhid: true,
+      email: true,
+      firstName: true,
+      lastName: true,
+      active: true,
+      gender: true,
+      phoneNumber: true,
+      address: true,
+    },
+  });
+};

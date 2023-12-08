@@ -33,5 +33,4 @@ export default (router: express.Router) => {
     isAuthenticated,
     patientAppointmentHistory
   );
-  router.post("/doctors/appointments", isAuthenticated, isDoctor);
 };
