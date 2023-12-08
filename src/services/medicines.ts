@@ -64,9 +64,9 @@ export const deleteMedicine = async (req: express.Request, res: express.Response
 
 export const getAllMedicines = async (req: express.Request, res: express.Response) => {
     try {
-        const result = await getAllMedicinesDB();
+        const medicines = await getAllMedicinesDB();
         return res.status(200).json({
-            result
+            result: medicines
         });
     } catch (error) {
         return error.status(500).json({
