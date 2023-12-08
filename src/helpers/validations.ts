@@ -23,6 +23,8 @@ export const validateCreateUserData = (req: createUserRequest) => {
     lastName: Joi.string().required(),
     phoneNumber: Joi.string().required(),
     address: Joi.string().required(),
+    weight: Joi.string(),
+    height: Joi.string(),
     dob: Joi.date().required(),
     creditCard: Joi.string().required(),
     userRole: Joi.string()

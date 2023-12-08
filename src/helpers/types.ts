@@ -43,6 +43,8 @@ export type createUserRequest = {
   creditCard: string;
   userRole: Role;
   password: string;
+  weight?: string;
+  height?: string;
 };
 
 export type createAppointmentRequest = {

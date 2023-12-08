@@ -17,7 +17,6 @@ import {
 export const login = async (req: express.Request, res: express.Response) => {
   try {
     const valid = validateLoginData(req.body);
-
     if (valid.error) {
       return res.status(400).json({ errorMessage: INVALID_LOGIN_DETAILS });
     }
@@ -52,6 +51,7 @@ export const login = async (req: express.Request, res: express.Response) => {
 export const register = async (req: express.Request, res: express.Response) => {
   try {
     const valid = validateCreateUserData(req.body);
+    console.log(valid);
     if (valid.error) {
       return res.status(400).json({ errorMessage: INVALID_USER_DETAILS });
     }
