@@ -21,6 +21,7 @@ import { User } from "helpers/types";
 export const login = async (req: express.Request, res: express.Response) => {
   try {
     const valid = validateLoginData(req.body);
+    console.log(valid);
     if (valid.error) {
       return res.status(400).json({ errorMessage: INVALID_LOGIN_DETAILS });
     }
@@ -56,13 +57,13 @@ export const login = async (req: express.Request, res: express.Response) => {
     });
   }
 };
-export const logout = async (req:express.Request,res:express.Response) => {
+export const logout = async (req: express.Request, res: express.Response) => {
   try {
     const user = get(req, "identity") as User;
-    user.sessionToken="";
+    user.sessionToken = "";
     await updateUser(user);
     return res.status(200).json({
-      successMessage: LOG_OUT_SUCCESS
+      successMessage: LOG_OUT_SUCCESS,
     });
   } catch (error) {
     return res.status(500).json({
@@ -70,7 +71,7 @@ export const logout = async (req:express.Request,res:express.Response) => {
       systemError: error,
     });
   }
-}
+};
 export const register = async (req: express.Request, res: express.Response) => {
   try {
     const valid = validateCreateUserData(req.body);
