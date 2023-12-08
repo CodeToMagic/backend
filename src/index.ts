@@ -9,7 +9,12 @@ import router from "./router";
 
 const app = express();
 
-app.use(cors({ credentials: true }));
+app.use(
+  cors({
+    credentials: true,
+    origin: "http://localhost:3000",
+  })
+);
 app.use(compression());
 app.use(cookieParser());
 app.use(bodyParser.json());
