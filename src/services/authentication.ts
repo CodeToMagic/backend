@@ -74,7 +74,6 @@ export const logout = async (req:express.Request,res:express.Response) => {
 export const register = async (req: express.Request, res: express.Response) => {
   try {
     const valid = validateCreateUserData(req.body);
-    console.log(valid);
     if (valid.error) {
       return res.status(400).json({ errorMessage: INVALID_USER_DETAILS });
     }
