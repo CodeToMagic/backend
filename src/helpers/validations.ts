@@ -74,3 +74,8 @@ export const updateMedicineSchema = Joi.object({
   description: Joi.string(),
   imageUrl: Joi.string(),
 });
+
+export const doctorAppointmentsSchema = Joi.object({
+  from: Joi.date().required(),
+  to: Joi.date().required(),
+});

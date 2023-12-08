@@ -21,7 +21,6 @@ import { User } from "helpers/types";
 export const login = async (req: express.Request, res: express.Response) => {
   try {
     const valid = validateLoginData(req.body);
-    console.log(valid);
     if (valid.error) {
       return res.status(400).json({ errorMessage: INVALID_LOGIN_DETAILS });
     }

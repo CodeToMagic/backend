@@ -29,9 +29,10 @@ export const createMedicine = async (
       return res.status(400).json({ errorMessage: INVALID_REQUEST });
     }
 
-    await createMedicineDB(req?.body);
+    const data = await createMedicineDB(req?.body);
     return res.status(200).json({
       successMessage: MEDICINE_SUCCESS,
+      medicineId: data?.medicineId,
     });
   } catch (error) {
     return res.status(500).json({
