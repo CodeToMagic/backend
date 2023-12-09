@@ -16,6 +16,8 @@ export type User = {
   saltedPassword: string;
   sessionToken: string;
   salt: string;
+  weight?: string;
+  height?: string;
 };
 
 export type AppointmentSlot = {

@@ -25,6 +25,8 @@ export const createUser = async (
       saltedPassword: true,
       sessionToken: true,
       salt: true,
+      weight: true,
+      height: true,
     },
   });
 };

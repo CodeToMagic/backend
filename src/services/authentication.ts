@@ -95,6 +95,8 @@ export const register = async (req: express.Request, res: express.Response) => {
       userRole: valid.value.userRole,
       sessionToken: authenticate(salt, valid.value.email),
       salt: salt,
+      height: valid.value.height,
+      weight: valid.value.weight,
     });
     return res.status(200).json(user).end();
   } catch (error) {
