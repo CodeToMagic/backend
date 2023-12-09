@@ -95,6 +95,20 @@ export const getAlltAppointmentsByPatientId = async (patientId: number) => {
           },
         },
       },
+      PrescriptionHistory: {
+        select: {
+          prescriptionId: true,
+          currentStatus: true,
+          PrescriptionItems: {
+            select: {
+              prescriptionId: true,
+              medicineId: true,
+              qty: true,
+              description: true,
+            },
+          },
+        },
+      },
     },
     orderBy: {
       appointmentSlots: { date: "desc" },
