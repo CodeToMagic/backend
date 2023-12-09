@@ -38,16 +38,25 @@ export const login = async (req: express.Request, res: express.Response) => {
 
     const updatedUser = await updateUser(user);
 
+    // Set the cookie
     res.cookie(SESSION_TOKEN_COOKIE, user.sessionToken, {
       domain: DOMAIN,
       path: "/",
     });
 
-    return res.status(200).json(updatedUser).end();
+    // Return the response with user role included
+    return res
+      .status(200)
+      .json({
+        ...updatedUser,
+        userRole: user.userRole, // Ensure this matches the property name in your User model
+      })
+      .end();
   } catch (error) {
     return res.status(400);
   }
 };
+
 export const register = async (req: express.Request, res: express.Response) => {
   try {
     const valid = validateCreateUserData(req.body);
