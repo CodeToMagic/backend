@@ -3,7 +3,7 @@ import {
   handleInternalServerError,
   handleInvalidRequestError,
 } from "../helpers/errors";
-import { getAllDoctorsDB } from "../db/user/user";
+import { getAllDoctorsDB, getDoctorsAvailabilityAsync } from "../db/user/user";
 import { retrieveDoctorAppointmentsInDateRange } from "../db/appointmentHistory/appointmentHistory";
 import { doctorAppointmentsSchema } from "../helpers/validations";
 import { get } from "lodash";
@@ -13,7 +13,14 @@ export const getAllDoctors = async (
   res: express.Response
 ) => {
   try {
-    const doctors = await getAllDoctorsDB();
+    const valid = doctorAppointmentsSchema.validate(req?.body);
+    if (valid.error) {
+      return handleInvalidRequestError(res);
+    }
+    const doctors = await getDoctorsAvailabilityAsync(
+      valid.value.from,
+      valid.value.to
+    );
     return res.status(200).json({ doctors: doctors });
   } catch (error) {
     return handleInternalServerError(res, error);

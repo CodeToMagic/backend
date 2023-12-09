@@ -54,3 +54,18 @@ export type createAppointmentRequest = {
   date: Date;
   slot: "MORNING" | "AFTERNOON";
 };
+
+type DayAvailability = {
+  MORNING?: { slotsAvailable: number };
+  AFTERNOON?: { slotsAvailable: number };
+  uhid: number;
+  email: string;
+  firstName: string;
+  lastName: string;
+  gender: string;
+  phoneNumber: string;
+  address: string;
+};
+
+export type DoctorsAvailability = Record<string, DayAvailability>;
+export type result = Record<string, DoctorsAvailability>;
