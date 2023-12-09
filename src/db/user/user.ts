@@ -141,3 +141,7 @@ export const getDoctorsAvailabilityAsync = async (from: Date, to: Date) => {
   const result = await fetchDoctorAvailability(from, to);
   return result;
 };
+
+export const appointmentHistoryByUserId = async (uhid: number) => {
+  return db.appointmentHistory.findMany({ where: { patientId: uhid } });
+};

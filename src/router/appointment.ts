@@ -9,6 +9,7 @@ import {
 } from "../middlewares";
 import {
   cancelAppointment,
+  getAlltAppointmentsByudhi,
   patientAppointmentHistory,
   registerAppointment,
 } from "../services/appointment";
@@ -31,6 +32,6 @@ export default (router: express.Router) => {
   router.get(
     "/appointment/history",
     isAuthenticated,
-    patientAppointmentHistory
+    getAlltAppointmentsByudhi
   );
 };

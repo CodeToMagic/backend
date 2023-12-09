@@ -22,6 +22,11 @@ import {
   SYSTEM_ERROR,
 } from "../helpers/constants";
 import { validateRegisterAppointment } from "../helpers/validations";
+import {
+  handleInternalServerError,
+  handleInvalidRequestError,
+} from "../helpers/errors";
+import { appointmentHistoryByUserId } from "../db/user/user";
 
 export const registerAppointment = async (
   req: express.Request,
@@ -127,5 +132,23 @@ export const patientAppointmentHistory = async (
       errorMessage: SYSTEM_ERROR,
       systemError: error,
     });
+  }
+};
+
+export const getAlltAppointmentsByudhi = async (
+  req: express.Request,
+  res: express.Response
+) => {
+  try {
+    const currentUserId = get(req, "identity.uhid") as number;
+    if (!currentUserId) {
+      return handleInvalidRequestError(res);
+    }
+    const appointmentDetails = await appointmentHistoryByUserId(currentUserId);
+    return res.status(200).json({
+      appointmentDetails: appointmentDetails,
+    });
+  } catch (error) {
+    return handleInternalServerError(res, error);
   }
 };
