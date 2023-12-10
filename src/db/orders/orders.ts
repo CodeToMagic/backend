@@ -1,5 +1,6 @@
 import { item } from "../../helpers/types";
 import { db } from "../../helpers/db.server";
+import { getSlotInformationBySlotId } from "../appointmentHistory/appointmentHistory";
 
 export const createPrescriptionAndOrder = async (
   appointmentId: number,
@@ -37,4 +38,12 @@ export const createPrescriptionAndOrder = async (
       },
     });
   }
+  const appointmentDetails = await db.appointmentHistory.findUnique({
+    where: { appointmentId: appointmentId },
+  });
+  appointmentDetails.currentStatus = "COMPLETED";
+  await db.appointmentHistory.update({
+    where: { appointmentId },
+    data: appointmentDetails,
+  });
 };
