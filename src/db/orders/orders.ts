@@ -47,3 +47,7 @@ export const createPrescriptionAndOrder = async (
     data: appointmentDetails,
   });
 };
+
+export const getOrderHistoryByUserId = async (userId: number) => {
+  return db.orderHistory.findMany({ where: { userId } });
+};
