@@ -69,3 +69,8 @@ type DayAvailability = {
 
 export type DoctorsAvailability = Record<string, DayAvailability>;
 export type result = Record<string, DoctorsAvailability>;
+
+export type item = {
+  medicineId: number;
+  qty: number;
+};
