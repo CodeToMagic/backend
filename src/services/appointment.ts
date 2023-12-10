@@ -13,6 +13,7 @@ import {
 import {
   APPOINTMENT_DETAILS_FETCHED,
   CANCELED,
+  INSUFFICIENT_PERMISSION,
   INVALID_REQUEST,
   NO_SLOTS_AVAILABLE,
   SCHEDULED,
@@ -84,6 +85,8 @@ export const cancelAppointment = async (
   res: express.Response
 ) => {
   try {
+    const currentUserId = get(req, "identity.uhid") as number;
+    const userRole = get(req, "identity.userRole") as string;
     const appointmentDetails = get(
       req,
       "appointmentDetails"
@@ -99,6 +102,11 @@ export const cancelAppointment = async (
     if (!slotInformation) {
       return res.status(500).json({
         errorMessage: SOMETHING_WENT_WRONG,
+      });
+    }
+    if (userRole === "DOCTOR" && slotInformation.doctorId !== currentUserId) {
+      return res.status(400).json({
+        errorMessage: INSUFFICIENT_PERMISSION,
       });
     }
     slotInformation.availableCount = slotInformation.availableCount + 1;
