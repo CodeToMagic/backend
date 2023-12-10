@@ -15,7 +15,7 @@ export const createPrescriptionAndOrderByDoctor = async (
   try {
     const { appointmentId, shouldOrder, items, totalAmount } = req?.body;
     const userId = get(req, "identity.uhid") as number;
-    if (!appointmentId || !shouldOrder || !items || !totalAmount) {
+    if (!appointmentId || !items || !totalAmount) {
       return handleInvalidRequestError(res);
     }
     await createPrescriptionAndOrder(
