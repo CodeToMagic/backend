@@ -22,8 +22,8 @@ export const createPrescriptionAndOrderByDoctor = async (
       userId,
       totalAmount
     );
-    return res.sendStatus(200).json({
-      success: true,
+    return res.status(200).json({
+      successMessage: "SUCCESS",
     });
   } catch (error) {
     return handleInternalServerError(res, error);
