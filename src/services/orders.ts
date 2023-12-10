@@ -22,7 +22,7 @@ export const createPrescriptionAndOrderByDoctor = async (
       userId,
       totalAmount
     );
-    return res.send(200).json({
+    return res.sendStatus(200).json({
       success: true,
     });
   } catch (error) {
