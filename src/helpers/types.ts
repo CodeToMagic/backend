@@ -16,6 +16,8 @@ export type User = {
   saltedPassword: string;
   sessionToken: string;
   salt: string;
+  weight?: string;
+  height?: string;
 };
 
 export type AppointmentSlot = {
@@ -51,4 +53,24 @@ export type createAppointmentRequest = {
   doctorId: number;
   date: Date;
   slot: "MORNING" | "AFTERNOON";
+};
+
+type DayAvailability = {
+  MORNING?: { slotsAvailable: number };
+  AFTERNOON?: { slotsAvailable: number };
+  uhid: number;
+  email: string;
+  firstName: string;
+  lastName: string;
+  gender: string;
+  phoneNumber: string;
+  address: string;
+};
+
+export type DoctorsAvailability = Record<string, DayAvailability>;
+export type result = Record<string, DoctorsAvailability>;
+
+export type item = {
+  medicineId: number;
+  qty: number;
 };

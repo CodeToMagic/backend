@@ -16,6 +16,12 @@ export const SLOT_BOOKING_CANCELED: string =
   "You have successfully cancelled the appointment";
 export const APPOINTMENT_DETAILS_FETCHED: string =
   "Appointment history fetched successfully";
+export const LOG_OUT_SUCCESS = "Successfully loggedout";
+export const UPDATE_SUCCESS = "User profile update successful";
+
+export const MEDICINE_SUCCESS = "Medicine creation success";
+export const MEDICINE_UPDATE_SUCCESS = "Medicine update success";
+export const MEDICINE_DELETE_SUCCESS = "Medicine delete success";
 
 // Error Messages
 export const INVALID_SESSION: string =
@@ -42,3 +48,5 @@ export const CAN_CANCEL_ONLY_SCHEDULED_APPOINTMENT: string =
   "Haven't found any scheduled appointment";
 export const CANT_REGISTER: string =
   "Can't make a duplicate appointment, either you have a scheduled or cancelled appointment in the same time frame";
+export const ONLY_ADMIN =
+  "Can't continue with this transaction, Admin privilege is required";

@@ -56,3 +56,40 @@ export const validateDoctorAppointmentsInDateRange = async (req: {
   });
   return dateRangeSchema.validate(req);
 };
+
+export const createMedicineSchema = Joi.object({
+  medicineName: Joi.string().required(),
+  availableQTY: Joi.number().integer().required(),
+  cost: Joi.number().required(),
+  isPrescriptionNeeded: Joi.boolean().required(),
+  description: Joi.string().required(),
+  imageUrl: Joi.string().required(),
+});
+
+export const updateMedicineSchema = Joi.object({
+  medicineName: Joi.string(),
+  availableQTY: Joi.number().integer(),
+  cost: Joi.number(),
+  isPrescriptionNeeded: Joi.boolean(),
+  description: Joi.string(),
+  imageUrl: Joi.string(),
+});
+
+export const doctorAppointmentsSchema = Joi.object({
+  from: Joi.date().required(),
+  to: Joi.date().required(),
+});
+
+export const userUpdateValidationSchema = Joi.object({
+  firstName: Joi.string(),
+  lastName: Joi.string(),
+  address: Joi.string(),
+  creditCard: Joi.string(),
+  dob: Joi.date(),
+  gender: Joi.string(),
+  phoneNumber: Joi.string(),
+  userRole: Joi.string(),
+  password: Joi.string(),
+  height: Joi.string(),
+  weight: Joi.string(),
+}).min(1);

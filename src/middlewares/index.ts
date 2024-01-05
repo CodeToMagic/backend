@@ -17,6 +17,7 @@ import {
   INVALID_SESSION,
   NO_APPOINTMENTS_FOUND,
   NO_APPOINTMENT_ID,
+  ONLY_ADMIN,
   SCHEDULED,
   SESSION_TOKEN_COOKIE,
   SYSTEM_ERROR,
@@ -81,6 +82,7 @@ export const isOwner = async (
   try {
     const { appointmentId } = req.body;
     const currentUserId = get(req, "identity.uhid") as number;
+    const userRole = get(req, "identity.userRole") as string;
     if (!currentUserId) {
       return res.status(403).json({
         errorMessage: INVALID_SESSION,
@@ -99,7 +101,7 @@ export const isOwner = async (
         errorMessage: NO_APPOINTMENTS_FOUND,
       });
     }
-    if (currentUserId != appointmentDetails.patientId) {
+    if (currentUserId != appointmentDetails.patientId && userRole != "DOCTOR") {
       return res.status(403).json({
         errorMessage: INSUFFICIENT_PERMISSION,
       });
@@ -183,6 +185,27 @@ export const isDoctor = async (
     if (!currentRole || currentRole != DOCTOR) {
       return res.status(403).json({
         errorMessage: INSUFFICIENT_PERMISSION,
+      });
+    }
+    next();
+  } catch (error) {
+    return res.status(400).json({
+      errorMessage: SYSTEM_ERROR,
+      systemError: error,
+    });
+  }
+};
+
+export const isAdmin = async (
+  req: express.Request,
+  res: express.Response,
+  next: express.NextFunction
+) => {
+  try {
+    const currentUserRole = get(req, "identity.userRole") as string;
+    if (currentUserRole !== "ADMIN") {
+      return res.status(400).json({
+        errorMessage: ONLY_ADMIN,
       });
     }
     next();
